@@ -1,0 +1,990 @@
+openapi: 3.0.3
+info:
+  title: Lexara
+  version: 0.1.0
+  description: Enterprise AI claim-and-technique governance catalog separating hype from reality for investment
+    and procurement gates.
+  x-product-slug: ai-enterprise-lexara
+  x-source: ai-in-enterprise/deloitte-nl-data-analytics-artificial-intelligence-whitepaper-eng/
+servers:
+- url: https://api.example.com
+tags:
+- name: Vocabulary
+  description: Controlled terms
+- name: Techniques
+  description: Technique inventory
+- name: Patterns
+  description: Application patterns
+- name: Claim Audits
+  description: Vendor claim audits
+- name: Readiness
+  description: Trend readiness
+- name: Mappings
+  description: Initiative mappings
+- name: Reporting
+  description: Hype vs reality
+- name: Governance
+  description: Catalog versions
+paths:
+  /v1/terms:
+    get:
+      operationId: listTerms
+      tags:
+      - Vocabulary
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Terms
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopeTermDefinition'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+    post:
+      operationId: createTerm
+      tags:
+      - Vocabulary
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Term created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeTermDefinition'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TermDefinitionCreate'
+  /v1/techniques:
+    get:
+      operationId: listTechniques
+      tags:
+      - Techniques
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Techniques
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopeTechnique'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+    post:
+      operationId: createTechnique
+      tags:
+      - Techniques
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Technique created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeTechnique'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TechniqueCreate'
+  /v1/patterns:
+    get:
+      operationId: listPatterns
+      tags:
+      - Patterns
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Patterns
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopeApplicationPattern'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+    post:
+      operationId: createPattern
+      tags:
+      - Patterns
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Pattern created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeApplicationPattern'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationPatternCreate'
+  /v1/claim-audits:
+    get:
+      operationId: listClaimAudits
+      tags:
+      - Claim Audits
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Audits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopeClaimAudit'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+    post:
+      operationId: openClaimAudit
+      tags:
+      - Claim Audits
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Audit opened
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeClaimAudit'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimAuditCreate'
+  /v1/claim-audits/{auditId}/classify:
+    parameters:
+    - name: auditId
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      operationId: classifyClaim
+      tags:
+      - Claim Audits
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Classified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeClaimAudit'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimClassifyRequest'
+  /v1/readiness-scores:
+    post:
+      operationId: scoreTrendReadiness
+      tags:
+      - Readiness
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Scored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeTrendReadinessScore'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrendReadinessCreate'
+  /v1/mappings:
+    post:
+      operationId: createInitiativeMapping
+      tags:
+      - Mappings
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Mapped
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeInitiativeMapping'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitiativeMappingCreate'
+  /v1/mappings/{mappingId}:
+    parameters:
+    - name: mappingId
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      operationId: getInitiativeMapping
+      tags:
+      - Mappings
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Mapping
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeInitiativeMapping'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/reports/hype-vs-reality:
+    get:
+      operationId: listHypeReports
+      tags:
+      - Reporting
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Reports
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopeHypeReport'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+    post:
+      operationId: issueHypeReport
+      tags:
+      - Reporting
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Report issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeHypeReport'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HypeReportCreate'
+  /v1/catalog/versions:
+    post:
+      operationId: publishCatalogVersion
+      tags:
+      - Governance
+      security:
+      - BearerAuth: []
+      responses:
+        '201':
+          description: Version published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeCatalogVersion'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogVersionCreate'
+  /v1/governance/audit-entries:
+    get:
+      operationId: listAuditEntries
+      tags:
+      - Governance
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Audit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListEnvelopeAuditEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      parameters:
+      - $ref: '#/components/parameters/Cursor'
+      - $ref: '#/components/parameters/Limit'
+  /v1/techniques/{techniqueId}:
+    parameters:
+    - name: techniqueId
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      operationId: getTechnique
+      tags:
+      - Techniques
+      security:
+      - ApiKeyAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Technique
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataEnvelopeTechnique'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    UnprocessableEntity:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    ResponseMeta:
+      type: object
+      required:
+      - requestId
+      - timestamp
+      properties:
+        requestId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    Problem:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+    TermDefinition:
+      type: object
+      required:
+      - id
+      - term
+      - definition
+      properties:
+        id:
+          type: string
+        term:
+          type: string
+        definition:
+          type: string
+        plainLanguage:
+          type: string
+    DataEnvelopeTermDefinition:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/TermDefinition'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeTermDefinition:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/TermDefinition'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    Technique:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        family:
+          type: string
+        narrownessNotes:
+          type: string
+    DataEnvelopeTechnique:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/Technique'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeTechnique:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Technique'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ApplicationPattern:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        nonTransferWarning:
+          type: boolean
+    DataEnvelopeApplicationPattern:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/ApplicationPattern'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeApplicationPattern:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ApplicationPattern'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ClaimAudit:
+      type: object
+      required:
+      - id
+      - vendorName
+      - classification
+      - status
+      properties:
+        id:
+          type: string
+        vendorName:
+          type: string
+        claimText:
+          type: string
+        classification:
+          type: string
+          enum:
+          - rebrand
+          - narrow_technique
+          - evidence_backed
+        status:
+          type: string
+          enum:
+          - open
+          - closed
+    DataEnvelopeClaimAudit:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/ClaimAudit'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeClaimAudit:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ClaimAudit'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    TrendReadinessScore:
+      type: object
+      required:
+      - id
+      - initiativeId
+      - passed
+      properties:
+        id:
+          type: string
+        initiativeId:
+          type: string
+        cloudReady:
+          type: boolean
+        unstructuredDataReady:
+          type: boolean
+        apiLeverageReady:
+          type: boolean
+        passed:
+          type: boolean
+    DataEnvelopeTrendReadinessScore:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/TrendReadinessScore'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeTrendReadinessScore:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/TrendReadinessScore'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    InitiativeMapping:
+      type: object
+      required:
+      - id
+      - initiativeId
+      properties:
+        id:
+          type: string
+        initiativeId:
+          type: string
+        techniqueIds:
+          type: array
+          items:
+            type: string
+        claimAuditId:
+          type: string
+    DataEnvelopeInitiativeMapping:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/InitiativeMapping'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeInitiativeMapping:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/InitiativeMapping'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    HypeReport:
+      type: object
+      required:
+      - id
+      - period
+      properties:
+        id:
+          type: string
+        period:
+          type: string
+        rebrandRate:
+          type: number
+        auditPassRate:
+          type: number
+    DataEnvelopeHypeReport:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/HypeReport'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeHypeReport:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/HypeReport'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    CatalogVersion:
+      type: object
+      required:
+      - id
+      - version
+      properties:
+        id:
+          type: string
+        version:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+    DataEnvelopeCatalogVersion:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/CatalogVersion'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeCatalogVersion:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/CatalogVersion'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    AuditEntry:
+      type: object
+      required:
+      - id
+      - eventType
+      - occurredAt
+      properties:
+        id:
+          type: string
+        eventType:
+          type: string
+        occurredAt:
+          type: string
+          format: date-time
+    DataEnvelopeAuditEntry:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/AuditEntry'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    ListEnvelopeAuditEntry:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/AuditEntry'
+            nextCursor:
+              type: string
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+    TermDefinitionCreate:
+      type: object
+      required:
+      - term
+      - definition
+      properties:
+        term:
+          type: string
+        definition:
+          type: string
+        plainLanguage:
+          type: string
+    TechniqueCreate:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        family:
+          type: string
+        narrownessNotes:
+          type: string
+    ApplicationPatternCreate:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        nonTransferWarning:
+          type: boolean
+    ClaimAuditCreate:
+      type: object
+      required:
+      - vendorName
+      - claimText
+      properties:
+        vendorName:
+          type: string
+        claimText:
+          type: string
+    ClaimClassifyRequest:
+      type: object
+      required:
+      - classification
+      properties:
+        classification:
+          type: string
+          enum:
+          - rebrand
+          - narrow_technique
+          - evidence_backed
+    TrendReadinessCreate:
+      type: object
+      required:
+      - initiativeId
+      properties:
+        initiativeId:
+          type: string
+        cloudReady:
+          type: boolean
+        unstructuredDataReady:
+          type: boolean
+        apiLeverageReady:
+          type: boolean
+    InitiativeMappingCreate:
+      type: object
+      required:
+      - initiativeId
+      - techniqueIds
+      properties:
+        initiativeId:
+          type: string
+        techniqueIds:
+          type: array
+          items:
+            type: string
+        claimAuditId:
+          type: string
+    HypeReportCreate:
+      type: object
+      required:
+      - period
+      properties:
+        period:
+          type: string
+    CatalogVersionCreate:
+      type: object
+      required:
+      - version
+      properties:
+        version:
+          type: string
